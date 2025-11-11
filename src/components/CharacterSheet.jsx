@@ -75,6 +75,9 @@ export default function CharacterSheet({ character, onUpdate }) {
             <p><strong>Name:</strong> {character.name || 'Unnamed'}</p>
             <p><strong>Species:</strong> {character.species.name}</p>
             <p><strong>Class:</strong> {character.class.name}</p>
+            {character.subclass && (
+              <p><strong>Subclass:</strong> {character.subclass.name}</p>
+            )}
             <p><strong>Background:</strong> {character.background.name}</p>
             <p><strong>Level:</strong> {character.level}</p>
           </div>
@@ -131,8 +134,44 @@ export default function CharacterSheet({ character, onUpdate }) {
                 ))}
               </ul>
             </div>
+            {character.subclass && (
+              <div style={{ marginTop: '12px' }}>
+                <strong>Subclass:</strong> {character.subclass.name}
+                <p style={{ marginTop: '4px', fontSize: '14px' }}>{character.subclass.description}</p>
+              </div>
+            )}
           </div>
         </div>
+
+        {character.class.isSpellcaster && character.spells && (
+          <div className="character-sheet-section" style={{ marginTop: '24px' }}>
+            <h3>Spells</h3>
+            {character.spells.cantrips && character.spells.cantrips.length > 0 && (
+              <div style={{ marginBottom: '16px' }}>
+                <strong>Cantrips (0-level):</strong>
+                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
+                  {character.spells.cantrips.map((spell) => (
+                    <li key={spell.id}>{spell.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {character.spells.level1 && character.spells.level1.length > 0 && (
+              <div>
+                <strong>1st-Level Spells:</strong>
+                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
+                  {character.spells.level1.map((spell) => (
+                    <li key={spell.id}>{spell.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {(!character.spells.cantrips || character.spells.cantrips.length === 0) && 
+             (!character.spells.level1 || character.spells.level1.length === 0) && (
+              <p>No spells selected.</p>
+            )}
+          </div>
+        )}
 
         <div className="character-sheet-section" style={{ marginTop: '24px' }}>
           <h3>Equipment</h3>

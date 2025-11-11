@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 import StepIndicator from './StepIndicator';
 import SpeciesSelection from './SpeciesSelection';
 import ClassSelection from './ClassSelection';
+import SubclassSelection from './SubclassSelection';
 import BackgroundSelection from './BackgroundSelection';
 import AbilityScores from './AbilityScores';
+import SpellSelection from './SpellSelection';
 import CharacterSheet from './CharacterSheet';
 import { species, classes, backgrounds } from '../data/characterData';
 
 const STEPS = [
   'Species',
   'Class',
+  'Subclass',
   'Background',
   'Ability Scores',
+  'Spells',
   'Review'
 ];
 
@@ -21,6 +25,7 @@ export default function CharacterWizard() {
   const [character, setCharacter] = useState({
     species: null,
     class: null,
+    subclass: null,
     background: null,
     abilityScores: {
       strength: 8,
@@ -31,6 +36,7 @@ export default function CharacterWizard() {
       charisma: 8
     },
     speciesAbilityIncreases: {},
+    spells: { cantrips: [], level1: [] },
     level: 1,
     name: ''
   });
@@ -58,10 +64,17 @@ export default function CharacterWizard() {
       case 1:
         return character.class !== null;
       case 2:
-        return character.background !== null;
+        // Subclass is optional for some classes, but required for others
+        // For simplicity, we'll make it optional (can proceed without)
+        return true;
       case 3:
+        return character.background !== null;
+      case 4:
         // Check if point buy is valid (27 points used)
         return abilityScoresValid;
+      case 5:
+        // Spells are optional (only for spellcasters)
+        return true;
       default:
         return true;
     }
@@ -80,17 +93,25 @@ export default function CharacterWizard() {
         return (
           <ClassSelection
             selected={character.class}
-            onSelect={(selectedClass) => updateCharacter({ class: selectedClass })}
+            onSelect={(selectedClass) => updateCharacter({ class: selectedClass, subclass: null })}
           />
         );
       case 2:
+        return (
+          <SubclassSelection
+            characterClass={character.class}
+            selected={character.subclass}
+            onSelect={(selectedSubclass) => updateCharacter({ subclass: selectedSubclass })}
+          />
+        );
+      case 3:
         return (
           <BackgroundSelection
             selected={character.background}
             onSelect={(selectedBackground) => updateCharacter({ background: selectedBackground })}
           />
         );
-      case 3:
+      case 4:
         return (
           <AbilityScores
             character={character}
@@ -98,7 +119,15 @@ export default function CharacterWizard() {
             onValidationChange={setAbilityScoresValid}
           />
         );
-      case 4:
+      case 5:
+        return (
+          <SpellSelection
+            characterClass={character.class}
+            selectedSpells={character.spells}
+            onUpdate={updateCharacter}
+          />
+        );
+      case 6:
         return (
           <CharacterSheet
             character={character}
@@ -146,9 +175,11 @@ export default function CharacterWizard() {
             onClick={() => {
               // Reset to start
               setCurrentStep(0);
+              setAbilityScoresValid(false);
               setCharacter({
                 species: null,
                 class: null,
+                subclass: null,
                 background: null,
                 abilityScores: {
                   strength: 8,
@@ -159,6 +190,7 @@ export default function CharacterWizard() {
                   charisma: 8
                 },
                 speciesAbilityIncreases: {},
+                spells: { cantrips: [], level1: [] },
                 level: 1,
                 name: ''
               });
