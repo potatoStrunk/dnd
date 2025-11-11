@@ -63,6 +63,49 @@ This generator follows the latest D&D rules including:
 - Vite
 - Modern CSS with gradients and glassmorphism effects
 
+## Deployment to GitHub Pages
+
+This project is configured for deployment to GitHub Pages. Here's how to deploy:
+
+### Automatic Deployment (Recommended)
+
+1. **Enable GitHub Pages**:
+   - Go to your repository on GitHub
+   - Click Settings → Pages
+   - Under "Source", select "GitHub Actions"
+
+2. **Update the base path** (if needed):
+   - If your repository is named something other than `luke-site-cursor`, update `vite.config.js`:
+   ```js
+   base: process.env.NODE_ENV === 'production' ? '/your-repo-name/' : '/',
+   ```
+   - If deploying to a custom domain or user/organization page, use `base: '/'`
+
+3. **Push to main branch**:
+   - The GitHub Actions workflow will automatically build and deploy your site
+   - Your site will be available at: `https://yourusername.github.io/your-repo-name/`
+
+### Manual Deployment
+
+1. Build the project:
+   ```bash
+   npm run build
+   ```
+
+2. Push the `dist` folder to the `gh-pages` branch:
+   ```bash
+   npm install -g gh-pages
+   gh-pages -d dist
+   ```
+
+### Other Hosting Options
+
+This is a static site and can also be deployed to:
+- **Netlify**: Drag and drop the `dist` folder or connect your GitHub repo
+- **Vercel**: Connect your GitHub repo for automatic deployments
+- **Heroku**: Not recommended for static sites (overkill and costs money)
+- **Any static hosting**: The `dist` folder contains everything needed
+
 ## License
 
 This project is for personal use and educational purposes. D&D content is property of Wizards of the Coast.

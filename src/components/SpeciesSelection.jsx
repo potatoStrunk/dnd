@@ -32,12 +32,16 @@ export default function SpeciesSelection({ selected, onSelect }) {
   const baseSpeciesData = selected ? species.find(s => s.id === selected.id) : null;
   const availableSubspecies = (baseSpeciesData && Array.isArray(baseSpeciesData.subspecies)) ? baseSpeciesData.subspecies : [];
   
+  // Check if a subspecies has been selected (it will be an object with an id, not an array)
+  const hasSelectedSubspecies = selected && selected.subspecies && !Array.isArray(selected.subspecies) && selected.subspecies.id;
+  
   // Check if we should show subspecies selection
-  const showSubspeciesSelection = selected && 
-                                   baseSpeciesData && 
-                                   baseSpeciesData.hasSubspecies && 
-                                   availableSubspecies.length > 0 && 
-                                   !selected.subspecies;
+  // Show if: species is selected, has subspecies available, and no subspecies is currently selected
+  const showSubspeciesSelection = !!(
+    selected && 
+    availableSubspecies.length > 0 && 
+    !hasSelectedSubspecies
+  );
 
   return (
     <div>
@@ -108,7 +112,7 @@ export default function SpeciesSelection({ selected, onSelect }) {
             </div>
           )}
 
-          {selected.subspecies && (
+          {hasSelectedSubspecies && (
             <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(255, 215, 0, 0.2)', borderRadius: '8px' }}>
               <strong>Subspecies:</strong> {selected.subspecies.name}
             </div>
